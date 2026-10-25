@@ -1,0 +1,28 @@
+name: build-cocote-go
+on:
+  workflow_dispatch:
+  push:
+    paths: ["go/**", ".github/workflows/build-go.yml"]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+      - name: Vet
+        working-directory: go
+        run: go vet ./...
+      - name: Build amd64 + arm64
+        working-directory: go
+        env:
+          CGO_ENABLED: "0"
+        run: |
+          mkdir -p ../dist
+          GOOS=linux GOARCH=amd64 go build -trimpath -ldflags "-s -w" -o ../dist/cocote-linux-amd64 .
+          GOOS=linux GOARCH=arm64 go build -trimpath -ldflags "-s -w" -o ../dist/cocote-linux-arm64 .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cocote-binaries
+          path: dist/*
