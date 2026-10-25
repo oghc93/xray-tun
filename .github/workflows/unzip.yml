@@ -4,7 +4,7 @@ on:
     inputs:
       zipfile:
         description: "Nama file zip"
-        default: "cocote-trial-1.0.29.zip"
+        default: "cocote-pannel-1.0.35-xray-tun.zip"
 permissions:
   contents: write
 jobs:
