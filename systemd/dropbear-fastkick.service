@@ -1,0 +1,14 @@
+[Unit]
+Description=Dropbear nTLS Fast Device Limiter
+After=network.target dropbear.service
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /etc/vpn-script/addon/dropbear-fastkick.sh
+Restart=always
+RestartSec=5
+StandardOutput=append:/var/log/vpn-dropbear-fastkick.log
+StandardError=append:/var/log/vpn-dropbear-fastkick.log
+
+[Install]
+WantedBy=multi-user.target

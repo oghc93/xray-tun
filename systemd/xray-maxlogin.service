@@ -1,0 +1,15 @@
+[Unit]
+Description=Xray Maxlogin-like Device Limiter
+After=network.target xray.service
+Wants=xray.service
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /etc/vpn-script/addon/xray-maxlogin-daemon.sh
+Restart=always
+RestartSec=5
+StandardOutput=append:/var/log/vpn-xray-maxlogin.log
+StandardError=append:/var/log/vpn-xray-maxlogin.log
+
+[Install]
+WantedBy=multi-user.target

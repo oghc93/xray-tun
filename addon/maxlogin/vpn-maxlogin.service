@@ -1,0 +1,12 @@
+[Unit]
+Description=VPN MaxLogin (batas perangkat Xray via Nginx auth_request)
+After=network.target
+
+[Service]
+Environment=MAXLOGIN_CONFIG=/etc/vpn-script/maxlogin.json
+ExecStart=/usr/bin/python3 /etc/vpn-script/maxlogin/maxlogin_service.py serve
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

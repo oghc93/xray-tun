@@ -1,0 +1,14 @@
+{
+  "listen_host": "127.0.0.1",
+  "listen_port": 10901,
+  "ttl_seconds": 120,
+  "shared_min_limit": 10,
+  "shared_ttl_seconds": 300,
+  "ip_group_bits": 16,
+  "ip_pools": "112.215,140.213",
+  "on_error": "allow",
+  "xray_stats": true,
+  "xray_manage": false,
+  "xray_config": "/etc/xray/config.json",
+  "xray_bin": "/usr/local/bin/xray"
+}
