@@ -3,38 +3,22 @@ on:
   workflow_dispatch:
     inputs:
       zipfile:
-        description: "Nama file zip (kosongkan untuk cari otomatis)"
+        description: "Nama file zip"
         default: "cocote-pannel-1.0.35-xray-tun.zip"
 permissions:
   contents: write
 jobs:
   unzip:
     runs-on: ubuntu-latest
-    env:
-      PAT: ${{ secrets.PAT_TOKEN }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.PAT_TOKEN || github.token }}
 
-      - name: Cari zip
+      - name: Extract zip ke root repo
         run: |
           ZIP="${{ github.event.inputs.zipfile }}"
-          if [ -z "$ZIP" ] || [ ! -f "$ZIP" ]; then
-            ZIP=$(find . -name "*.zip" -not -path "./.git/*" | head -n 1)
-          fi
-          [ -n "$ZIP" ] || { echo "Zip tidak ditemukan"; exit 1; }
-          echo "ZIP=$ZIP" >> $GITHUB_ENV
-          echo "Zip terpilih: $ZIP"
-
-      - name: Extract ke root repo
-        run: |
           mkdir _tmp
           unzip -o "$ZIP" -d _tmp
-          if [ -z "$PAT" ]; then
-            echo "PAT_TOKEN kosong, folder .github dilewati"
-            rm -rf _tmp/.github
-          fi
+          # kalau isi zip dibungkus 1 folder, isinya dinaikkan ke root
           if [ "$(ls -A _tmp | wc -l)" -eq 1 ] && [ -d "_tmp/$(ls -A _tmp)" ]; then
             cp -a _tmp/*/. .
           else
@@ -45,4 +29,8 @@ jobs:
 
       - name: Commit dan push
         run: |
-          git config user.name
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add -A
+          git commit -m "Unzip ${{ github.event.inputs.zipfile }}" || echo "tidak ada perubahan"
+          git push
