@@ -3,6 +3,8 @@ on:
   workflow_dispatch:
   push:
     paths: ["go/**", ".github/workflows/build-go.yml"]
+permissions:
+  contents: write
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,10 +21,12 @@ jobs:
         env:
           CGO_ENABLED: "0"
         run: |
-          mkdir -p ../dist
-          GOOS=linux GOARCH=amd64 go build -trimpath -ldflags "-s -w" -o ../dist/cocote-linux-amd64 .
-          GOOS=linux GOARCH=arm64 go build -trimpath -ldflags "-s -w" -o ../dist/cocote-linux-arm64 .
-      - uses: actions/upload-artifact@v4
-        with:
-          name: cocote-binaries
-          path: dist/*
+          mkdir -p ../bin
+          GOOS=linux GOARCH=amd64 go build -trimpath -ldflags "-s -w" -o ../bin/cocote-linux-amd64 .
+          GOOS=linux GOARCH=arm64 go build -trimpath -ldflags "-s -w" -o ../bin/cocote-linux-arm64 .
+      - name: Simpan binary ke repo (folder bin/)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add bin/
+          git diff --cached --quiet || (git commit -m "build: update binary cocote" && git push)
